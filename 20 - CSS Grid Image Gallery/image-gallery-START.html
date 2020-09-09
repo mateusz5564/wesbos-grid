@@ -47,13 +47,73 @@
 
     .close {
       background: none;
-      color: white;
+      color: black;
       border: 0;
     }
 
-    .gallery {}
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 100px);
+      grid-auto-rows: 100px;
+      grid-auto-flow: dense;
+    }
 
+    .item {
+      overflow: hidden;
+    }
 
+    .item img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+
+    .item__overlay {
+      background: #ffc60032;
+      grid-column: 1 / -1;
+      grid-row: 1 / -1;
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      transform: translateY(100%);
+      transition: 300ms ease-in;
+    }
+
+    .item__overlay button {
+      background: rgba(0, 0, 0, .7);
+      border: 2px solid white;
+      color: white;
+      text-transform: uppercase;
+      padding: 5px;
+    }
+
+    .item:hover .item__overlay {
+      transform: translateY(0);
+    }
+
+    .item.h2 {
+      grid-column: span 2;
+    }
+
+    .item.h3 {
+      grid-column: span 3;
+    }
+
+    .item.h4 {
+      grid-column: span 4;
+    }
+
+    .item.v2 {
+      grid-row: span 2;
+    }
+
+    .item.v3 {
+      grid-row: span 3;
+    }
+
+    .item.v4 {
+      grid-row: span 4;
+    }
 
     .overlay {
       position: fixed;
@@ -64,13 +124,15 @@
       left: 0;
       display: none;
       z-index: 2;
+      align-items: center;
+      justify-items: center;
     }
 
     .overlay.open {
       display: grid;
     }
 
-    .overlay figure {
+    .overlay-inner {
       background: white;
       width: 700px;
       padding: 20px;
@@ -82,6 +144,46 @@
   </style>
 
   <script>
+    const gallery = document.querySelector('.gallery');
+    const overlay = document.querySelector('.overlay');
+
+    const closeBtn = document.querySelector('.close');
+    const overlayImg = document.querySelector('.overlay-inner img');
+
+    const images = Array.from(new Array(50), () => [`h${randomNumber(4)}`, `v${randomNumber(4)}`]);
+    const imagesHTML = images.map(generateHTML).join('');
+
+    gallery.innerHTML = imagesHTML;
+
+    function generateHTML([h, v]) {
+      return `
+      <div class="item ${h} ${v}">
+        <img src="images/${randomNumber(12)}.jpg">
+        <div class="item__overlay">
+          <button>View</button>
+        </div>
+      </div>  
+      `;
+    }
+
+    function randomNumber(limit) {
+      return Math.floor(Math.random() * limit + 1);
+    }
+
+    items = document.querySelectorAll(".item");
+    items.forEach(item => {item.addEventListener('click', handleClick)})
+    closeBtn.addEventListener('click', close);
+
+    function handleClick(e) {
+      const img = this.querySelector("img")
+      overlay.classList.add("open");
+      overlayImg.src = img.src;
+    }
+
+    function close() {
+      overlay.classList.remove("open");
+    }
+
   </script>
 </body>
 
